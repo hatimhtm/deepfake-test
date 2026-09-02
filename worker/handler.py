@@ -1,19 +1,24 @@
 """
-A thin serverless handler for SCAIL-2 on RunPod.
+A thin serverless handler for the Wan-Animate worker on RunPod.
 
-The stock worker-comfyui handler only accepts input as base64 images under
-10 MB and only returns images. This job moves a reel in and a video out, so
-this handler does two extra things and nothing else:
+The stock worker-comfyui handler takes base64 images under 10 MB in and returns
+images out, which a reel cannot travel through in either direction. This does
+three things and nothing else:
 
-  1. `input.files`  — [{name, url}] downloaded into ComfyUI's input folder,
-     so a 100 MB reel never rides inside the request body.
-  2. Every file ComfyUI writes to its output folder during the job — mp4s
-     included — is uploaded to Supabase storage and returned as a URL.
+  1. `input.files` — [{name, url}] fetched into ComfyUI's input folder, so a
+     100 MB reel never rides inside the request body.
+  2. `input.upload_urls` — signed URLs, spent in filename order on whatever
+     ComfyUI writes during the job, mp4s included. The credential stays with
+     the caller; this worker is rented by the minute and holds none.
+  3. `input.op = "object_info"` — what ComfyUI thinks a node's inputs are,
+     which is the only way to convert an editor-format graph or tell a missing
+     node pack from a malformed one, there being no shell on a live worker.
 
 ComfyUI itself is the untouched one from the base image; this only talks to it
 over its local HTTP API.
 """
 
+import base64
 import json
 import os
 import time
@@ -28,9 +33,11 @@ COMFY = os.environ.get("COMFY_HOST", "127.0.0.1:8188")
 INPUT_DIR = os.environ.get("COMFY_INPUT_DIR", "/comfyui/input")
 OUTPUT_DIR = os.environ.get("COMFY_OUTPUT_DIR", "/comfyui/output")
 
-SUPABASE_URL = os.environ.get("SUPABASE_URL", "").rstrip("/")
-SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_KEY", "")
-BUCKET = os.environ.get("SUPABASE_BUCKET", "deepfake-test")
+# Outputs leave over per-job signed URLs the caller mints, so this worker never
+# holds a storage credential. A GPU box rented by the minute from strangers is
+# the last place a service-role key should live, and a signed URL that expires
+# is worth nothing to anyone who finds it afterwards.
+MAX_INLINE = int(os.environ.get("MAX_INLINE_BYTES", 8 << 20))
 
 
 def _get(url, timeout=30):
@@ -76,26 +83,27 @@ def _history(prompt_id):
     return json.loads(_get(f"http://{COMFY}/history/{prompt_id}", timeout=30))
 
 
-def _upload(path, key):
-    """PUT one file into Supabase storage; returns its public URL."""
+def _put(path, target):
+    """Send one file to a signed URL the caller minted.
+
+    `target` is either the URL string or {url, method, headers}, so the same
+    handler works against Supabase, S3 or anything else that hands out a signed
+    PUT — the worker never learns which, and never holds a key for any of them.
+    """
+    if isinstance(target, str):
+        target = {"url": target}
     ctype = mimetypes.guess_type(path)[0] or "application/octet-stream"
     with open(path, "rb") as f:
         data = f.read()
-    url = f"{SUPABASE_URL}/storage/v1/object/{BUCKET}/{urllib.parse.quote(key)}"
+    headers = {"Content-Type": ctype}
+    headers.update(target.get("headers") or {})
     req = urllib.request.Request(
-        url,
-        data=data,
-        method="POST",
-        headers={
-            "Authorization": f"Bearer {SUPABASE_KEY}",
-            "apikey": SUPABASE_KEY,
-            "Content-Type": ctype,
-            "x-upsert": "true",
-        },
+        target["url"], data=data, method=target.get("method", "PUT"), headers=headers
     )
-    with urllib.request.urlopen(req, timeout=600) as r:
+    with urllib.request.urlopen(req, timeout=900) as r:
         r.read()
-    return f"{SUPABASE_URL}/storage/v1/object/public/{BUCKET}/{urllib.parse.quote(key)}"
+    # The public address is the caller's to know; it minted the URL.
+    return target.get("public_url")
 
 
 def _object_info(names):
@@ -173,22 +181,32 @@ def handler(job):
     else:
         return {"error": "timed out waiting for ComfyUI"}
 
-    # Ship everything new in the output folder.
+    # Ship everything new in the output folder, in filename order, spending the
+    # caller's signed URLs in that same order. Anything left over comes back
+    # inline if it is small enough to travel, and is otherwise only named — a
+    # 200 MB mp4 cannot ride inside a JSON response, and pretending otherwise
+    # fails later and less clearly than saying so here.
+    uploads = list(inp.get("upload_urls") or [])
     outputs = []
-    prefix = inp.get("prefix") or job.get("id") or client_id
     for root, _, names in os.walk(OUTPUT_DIR):
         for n in sorted(names):
             p = os.path.join(root, n)
             if p in before:
                 continue
             rel = os.path.relpath(p, OUTPUT_DIR)
-            try:
-                url = _upload(p, f"{prefix}/{rel}") if SUPABASE_URL and SUPABASE_KEY else None
-            except Exception as e:  # noqa: BLE001
-                url = None
-                outputs.append({"file": rel, "error": str(e)})
-                continue
-            outputs.append({"file": rel, "url": url, "bytes": os.path.getsize(p)})
+            size = os.path.getsize(p)
+            entry = {"file": rel, "bytes": size}
+            if uploads:
+                try:
+                    entry["url"] = _put(p, uploads.pop(0))
+                except Exception as e:  # noqa: BLE001
+                    entry["error"] = f"upload failed: {e}"
+            elif size <= MAX_INLINE:
+                with open(p, "rb") as f:
+                    entry["base64"] = base64.b64encode(f.read()).decode()
+            else:
+                entry["error"] = "no upload URL left for this file, and too big to inline"
+            outputs.append(entry)
 
     return {
         "outputs": outputs,
