@@ -98,9 +98,36 @@ def _upload(path, key):
     return f"{SUPABASE_URL}/storage/v1/object/public/{BUCKET}/{urllib.parse.quote(key)}"
 
 
+def _object_info(names):
+    """The definitions of specific nodes, as ComfyUI reports them.
+
+    Graphs are drawn in the editor's format, but /prompt only accepts the API
+    format, and converting between the two needs to know each node's real input
+    names — which only the running ComfyUI knows. Asking for named nodes rather
+    than the whole catalogue keeps the reply small enough to travel.
+    """
+    if not names:
+        return json.loads(_get(f"http://{COMFY}/object_info", timeout=60))
+    out = {}
+    for n in names:
+        try:
+            out.update(json.loads(_get(f"http://{COMFY}/object_info/{urllib.parse.quote(n)}", timeout=30)))
+        except Exception as e:  # noqa: BLE001
+            out[n] = {"error": str(e)}
+    return out
+
+
 def handler(job):
     started = time.time()
     inp = job.get("input") or {}
+
+    # Introspection, so a graph can be converted and a missing node pack
+    # diagnosed without shell access to a serverless worker.
+    if inp.get("op") == "object_info":
+        if not _wait_for_comfy():
+            return {"error": "ComfyUI did not come up"}
+        return {"object_info": _object_info(inp.get("nodes") or [])}
+
     workflow = inp.get("workflow")
     if not isinstance(workflow, dict):
         return {"error": "input.workflow (API format) is required"}
