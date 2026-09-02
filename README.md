@@ -2,28 +2,44 @@
 
 **Live : https://hatimhtm.github.io/deepfake-test/**
 
-Une page, un test : dépose la photo d'une persona et le reel d'un modèle, la
-persona rejoue le reel (mouvement, gestes, expressions, lèvres). Le son
-d'origine est remis dessous.
+Une persona, un reel : la persona rejoue le reel — mouvement, gestes,
+expressions, lèvres. Le son d'origine reste dessous.
 
-## Ce que c'est
+Deux routes existent, et elles ne servent pas à la même chose.
 
-- Une seule expérience, sur l'API hébergée **Kling 2.6 motion control** (kie.ai).
-- 100 % statique : la clé API est collée dans la page et ne quitte pas le
-  navigateur (elle ne va qu'à kie.ai). Rien n'est stocké ici.
-- Coût mesuré sur le premier clip : 9,7 s → 99 crédits ≈ 0,50 $, 410 s.
+## 1. Kling 2.6 chez kie.ai — le formulaire de la page
 
-## Ce que ce n'est pas
+Rien à installer. La clé API est collée dans la page et ne quitte pas le
+navigateur.
 
-- Pas notre modèle, pas notre GPU, pas notre décor : dans ce mode le décor vient
-  de la photo de la persona, pas du reel. Pour garder le décor du reel il faut
-  d'abord placer la persona dans une image du reel.
-- Pas le volume : chaque clip passe par un filtre tiers et une file d'attente.
+Mesuré : 9,7 s → 99 crédits ≈ **0,50 $**, 410 s.
 
-## La suite
+Sa limite est structurelle, pas un réglage : **le décor vient de la photo de la
+persona, pas du reel.** Un portrait sur fond de salon a mis le modèle dans un
+salon et fait disparaître le cornet de glace qu'elle tenait. On peut le
+contourner en compositant d'abord la persona dans une image du reel, mais cela
+fait deux générations et une image choisie à la main par clip. Et chaque clip
+passe par le filtre d'un tiers.
 
-La version production est **SCAIL-2** (Wan 2.1, remplacement de personnage,
-Apache 2.0, intégré à ComfyUI 0.34) sur notre propre endpoint RunPod : décor du
-reel conservé, pas de filtre tiers, quelques centimes par clip. Le worker
-(`worker/handler.py`) et le workflow officiel sont prêts ; il manque le budget
-RunPod pour l'endpoint dédié (GPU 80 Go) et le stockage des poids (~40 Go).
+## 2. Wan 2.2 Animate sur notre GPU — construit et mesuré
+
+ComfyUI sur un endpoint RunPod à nous, un H100 loué à la seconde. Le mode
+remplacement ne refait pas la scène : il **remplace la personne et garde le
+décor du reel**. Le McCafé, les gobelets, la table et les gens au fond sont ceux
+du reel, sans montage préalable.
+
+Mesuré sur le même reel, 9,8 s en 480×832 : **131 s de GPU, ≈ 0,15 $** — environ
+trois fois moins cher que la route hébergée, et sans filtre tiers.
+
+Défaut connu : ce que la personne tient est à l'intérieur du masque du
+personnage, donc régénéré — sur dix secondes le cornet dérive vers un gobelet
+rouge et revient. Le décor, lui, ne bouge jamais.
+
+### Ce qui compose cette route
+
+| | |
+|---|---|
+| `worker/` | L'image du worker : ComfyUI 0.34 + les quatre packs de nœuds du graphe officiel, épinglés au commit. Construite par GitHub Actions vers `ghcr.io/hatimhtm/trendswap-worker`. |
+| `worker/handler.py` | Entrées par URL, sorties vers des URL signées fournies par l'appelant — le worker ne détient aucune clé. |
+| `scripts/fetch-models.sh` | Remplit le volume réseau (~29 Go) depuis un pod CPU jetable. |
+| `pipeline/` | La conversion du graphe éditeur vers le format API, et les pièges qui coûtent une exécution chacun. |

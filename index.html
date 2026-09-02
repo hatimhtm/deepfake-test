@@ -3,318 +3,41 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>TrendSwap · test vidéo</title>
-<meta name="description" content="Un test : une persona + un reel → la persona rejoue le reel.">
+<title>TrendSwap</title>
+<meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#07080c; --panel:rgba(255,255,255,.035); --edge:rgba(255,255,255,.09); --edge2:rgba(255,255,255,.18);
-  --snow:#f4f5f8; --mist:#a9adba; --fog:#6d7282; --brand:#7c8cff; --brand2:#c17cff; --ok:#3ddc97; --warn:#ffb454; --bad:#ff6b6b;
-}
+:root{--bg:#07080c;--panel:rgba(255,255,255,.035);--edge:rgba(255,255,255,.09);--snow:#f4f5f8;--mist:#a9adba;--fog:#6d7282;--brand:#7c8cff;--brand2:#c17cff}
 *{box-sizing:border-box}
-html,body{margin:0;background:var(--bg);color:var(--snow);font:15px/1.5 Inter,system-ui,-apple-system,Segoe UI,sans-serif;-webkit-font-smoothing:antialiased}
+html,body{margin:0;background:var(--bg);color:var(--snow);font:15px/1.6 Inter,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
 body::before{content:"";position:fixed;inset:-40%;z-index:-1;pointer-events:none;
-  background:radial-gradient(40% 35% at 20% 20%,rgba(124,140,255,.16),transparent 60%),radial-gradient(35% 30% at 80% 70%,rgba(193,124,255,.12),transparent 60%);
-  animation:drift 22s ease-in-out infinite alternate}
-@keyframes drift{from{transform:translate(0,0) rotate(0)}to{transform:translate(4%,-3%) rotate(6deg)}}
-.wrap{max-width:1080px;margin:0 auto;padding:40px 20px 80px}
-header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:34px;animation:rise .6s ease both}
-.logo{display:flex;align-items:center;gap:12px;font-weight:700;letter-spacing:-.01em}
-.logo i{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--brand2));display:grid;place-items:center;font-style:normal;box-shadow:0 8px 24px rgba(124,140,255,.35)}
-.tag{font-size:12px;color:var(--mist);border:1px solid var(--edge);border-radius:999px;padding:5px 11px;background:var(--panel)}
-h1{font-size:clamp(26px,4vw,38px);line-height:1.12;letter-spacing:-.02em;margin:0 0 10px;animation:rise .6s .05s ease both}
-.lead{color:var(--mist);max-width:60ch;margin:0 0 30px;animation:rise .6s .1s ease both}
-.grid{display:grid;gap:18px;grid-template-columns:1fr;animation:rise .6s .15s ease both}
-@media(min-width:880px){.grid{grid-template-columns:1.05fr .95fr}}
-.card{background:var(--panel);border:1px solid var(--edge);border-radius:18px;padding:22px;backdrop-filter:blur(12px);position:relative;overflow:hidden}
-.card h2{font-size:13px;text-transform:uppercase;letter-spacing:.12em;color:var(--fog);margin:0 0 14px;font-weight:600}
-.step{display:flex;align-items:center;gap:10px;margin:0 0 12px}
-.step b{width:24px;height:24px;border-radius:8px;display:grid;place-items:center;font-size:12px;background:rgba(124,140,255,.15);color:var(--brand);border:1px solid rgba(124,140,255,.35);transition:.3s}
-.step.done b{background:var(--ok);color:#052;border-color:transparent}
-.step span{font-weight:600}
-.field{margin-bottom:18px}
-label.lbl{display:block;font-size:12.5px;color:var(--mist);margin-bottom:6px}
-input[type=password],input[type=text]{width:100%;background:#0d0f16;border:1px solid var(--edge);color:var(--snow);border-radius:11px;padding:11px 13px;font:inherit;outline:none;transition:.2s}
-input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(124,140,255,.18)}
-.hint{font-size:12px;color:var(--fog);margin-top:6px}
-.drops{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.drop{position:relative;border:1.5px dashed var(--edge2);border-radius:14px;aspect-ratio:9/13;display:grid;place-items:center;text-align:center;padding:14px;cursor:pointer;transition:.25s;overflow:hidden;background:#0b0d14}
-.drop:hover,.drop.over{border-color:var(--brand);background:rgba(124,140,255,.06);transform:translateY(-1px)}
-.drop.has{border-style:solid;border-color:var(--edge)}
-.drop input{position:absolute;inset:0;opacity:0;cursor:pointer}
-.drop .ph{color:var(--mist);font-size:13px;line-height:1.4}
-.drop .ph em{display:block;font-style:normal;font-size:26px;margin-bottom:8px;filter:saturate(.8)}
-.drop img,.drop video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;animation:pop .35s ease both}
-.drop .meta{position:absolute;left:8px;right:8px;bottom:8px;font-size:11px;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);border-radius:8px;padding:6px 8px;color:var(--snow);text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-@keyframes pop{from{opacity:0;transform:scale(1.03)}to{opacity:1;transform:none}}
-@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-.opts{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
-.chip{border:1px solid var(--edge);border-radius:999px;padding:7px 12px;font-size:12.5px;color:var(--mist);cursor:pointer;background:transparent;transition:.2s;font:inherit}
-.chip[aria-pressed=true]{border-color:var(--brand);color:var(--snow);background:rgba(124,140,255,.12)}
-.btn{width:100%;border:0;border-radius:13px;padding:14px 18px;font:inherit;font-weight:700;font-size:15px;color:#fff;cursor:pointer;position:relative;overflow:hidden;
-  background:linear-gradient(135deg,var(--brand),var(--brand2));box-shadow:0 12px 34px rgba(124,140,255,.35);transition:.25s}
-.btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 16px 40px rgba(124,140,255,.45)}
-.btn:active:not(:disabled){transform:translateY(0) scale(.99)}
-.btn:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
-.btn::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.18) 50%,transparent 70%);transform:translateX(-100%);transition:none}
-.btn:hover:not(:disabled)::after{transform:translateX(100%);transition:transform .9s ease}
-.est{display:flex;justify-content:space-between;font-size:12.5px;color:var(--fog);margin-top:10px}
-.est b{color:var(--mist);font-weight:500;font-family:"JetBrains Mono",monospace}
-/* result */
-.stage{aspect-ratio:9/16;max-height:640px;margin:0 auto;border-radius:16px;background:#0b0d14;border:1px solid var(--edge);display:grid;place-items:center;position:relative;overflow:hidden}
-.stage video{width:100%;height:100%;object-fit:contain;background:#000;animation:pop .5s ease both}
-.idle{color:var(--fog);text-align:center;padding:20px;font-size:13.5px;max-width:28ch}
-.idle em{display:block;font-size:34px;margin-bottom:10px;font-style:normal;opacity:.7}
-.prog{text-align:center;padding:20px}
-.ring{width:118px;height:118px;margin:0 auto 16px;position:relative}
-.ring svg{transform:rotate(-90deg)}
-.ring circle{fill:none;stroke-width:6;stroke-linecap:round}
-.ring .bg{stroke:rgba(255,255,255,.08)}
-.ring .fg{stroke:url(#g);stroke-dasharray:314;stroke-dashoffset:314;transition:stroke-dashoffset 1s linear}
-.ring .t{position:absolute;inset:0;display:grid;place-items:center;font-family:"JetBrains Mono",monospace;font-size:20px;font-weight:500}
-.state{color:var(--mist);font-size:13.5px;min-height:1.5em}
-.state.pulse{animation:pulse 1.6s ease-in-out infinite}
-@keyframes pulse{50%{opacity:.5}}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
-.stat{background:#0b0d14;border:1px solid var(--edge);border-radius:12px;padding:10px 12px;animation:rise .5s ease both}
-.stat small{display:block;color:var(--fog);font-size:11px;text-transform:uppercase;letter-spacing:.08em}
-.stat b{font-family:"JetBrains Mono",monospace;font-weight:500;font-size:16px}
-.row{display:flex;gap:10px;margin-top:12px}
-.ghost{flex:1;border:1px solid var(--edge);background:transparent;color:var(--snow);border-radius:11px;padding:10px;font:inherit;font-weight:600;cursor:pointer;text-align:center;text-decoration:none;transition:.2s}
-.ghost:hover{border-color:var(--edge2);background:var(--panel)}
-.note{margin-top:22px;border-left:3px solid var(--warn);background:rgba(255,180,84,.07);border-radius:0 12px 12px 0;padding:14px 16px;font-size:13.5px;color:var(--mist);animation:rise .6s .25s ease both}
-.note b{color:var(--snow)}
-.err{border-left-color:var(--bad);background:rgba(255,107,107,.08)}
-.foot{margin-top:40px;color:var(--fog);font-size:12px;text-align:center}
+  background:radial-gradient(40% 35% at 20% 20%,rgba(124,140,255,.16),transparent 60%),radial-gradient(35% 30% at 80% 70%,rgba(193,124,255,.12),transparent 60%)}
+.wrap{max-width:620px;margin:0 auto;padding:16vh 24px 80px}
+.logo{display:flex;align-items:center;gap:12px;font-weight:700;margin-bottom:28px}
+.logo i{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--brand2));display:grid;place-items:center;font-style:normal}
+h1{font-size:clamp(24px,4vw,32px);line-height:1.15;letter-spacing:-.02em;margin:0 0 14px}
+p{color:var(--mist);margin:0 0 16px}
+.card{background:var(--panel);border:1px solid var(--edge);border-radius:16px;padding:22px;margin-top:24px}
+.card b{color:var(--snow)}
+.foot{margin-top:32px;font-size:12.5px;color:var(--fog)}
 .foot a{color:var(--mist)}
-[hidden]{display:none!important}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <div class="logo"><i>🎭</i>TrendSwap <span class="tag" style="margin-left:6px">test vidéo</span></div>
-    <span class="tag" id="creditTag">clé non renseignée</span>
-  </header>
+  <div class="logo"><i>&#127914;</i>TrendSwap</div>
 
-  <h1>Une persona, un reel.<br>La persona rejoue le reel.</h1>
-  <p class="lead">Dépose la photo de la persona et le reel du modèle. Le mouvement, les gestes et les expressions du reel sont transférés sur la persona. Un clip de 10 s coûte environ 0,50 $ et prend 5 à 7 minutes.</p>
+  <h1>Cette page ne sert plus.</h1>
+  <p>TrendSwap fait maintenant partie de CloneOS, derrière le même identifiant que le reste de l'outil. La démo publique appelait une API tierce avec une clé collée dans le navigateur : ce n'est plus le cas.</p>
 
-  <div class="grid">
-    <section class="card">
-      <h2>Entrées</h2>
-
-      <div class="step" id="s1"><b>1</b><span>Clé API kie.ai</span></div>
-      <div class="field">
-        <input type="password" id="key" placeholder="Colle la clé ici — elle reste dans ce navigateur" autocomplete="off">
-        <div class="hint">Jamais envoyée ailleurs qu'à kie.ai. Mémorisée localement.</div>
-      </div>
-
-      <div class="step" id="s2"><b>2</b><span>Persona et reel</span></div>
-      <div class="drops">
-        <label class="drop" id="dImg">
-          <input type="file" id="fImg" accept="image/png,image/jpeg">
-          <div class="ph"><em>🙂</em>Photo de la persona<br><small>PNG/JPG · buste, face caméra</small></div>
-        </label>
-        <label class="drop" id="dVid">
-          <input type="file" id="fVid" accept="video/mp4,video/quicktime">
-          <div class="ph"><em>🎬</em>Reel du modèle<br><small>MP4/MOV · 3 à 30 s · 100 Mo max</small></div>
-        </label>
-      </div>
-
-      <div class="field" style="margin-top:16px">
-        <label class="lbl">Décor</label>
-        <div class="opts">
-          <button class="chip" data-o="video" aria-pressed="true">Cadrage du reel, décor de la photo</button>
-          <button class="chip" data-o="image" title="Limité à 10 s">Cadrage de la photo</button>
-        </div>
-        <div class="hint">Le décor vient toujours de la photo. Pour garder le décor du reel, donner une image de la persona déjà placée dans ce décor.</div>
-      </div>
-
-      <div class="field">
-        <label class="lbl">Qualité</label>
-        <div class="opts">
-          <button class="chip" data-m="720p" aria-pressed="true">720p · 8 crédits/s</button>
-          <button class="chip" data-m="1080p">1080p · 12 crédits/s</button>
-        </div>
-      </div>
-
-      <div class="step" id="s3"><b>3</b><span>Générer</span></div>
-      <button class="btn" id="go" disabled>Générer la vidéo</button>
-      <div class="est"><span>Estimation</span><b id="est">—</b></div>
-    </section>
-
-    <section class="card">
-      <h2>Résultat</h2>
-      <div class="stage" id="stage">
-        <div class="idle" id="idle"><em>✨</em>Le clip apparaîtra ici, avec le son d'origine remis dessus.</div>
-        <div class="prog" id="prog" hidden>
-          <div class="ring">
-            <svg width="118" height="118" viewBox="0 0 118 118">
-              <defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#7c8cff"/><stop offset="1" stop-color="#c17cff"/></linearGradient></defs>
-              <circle class="bg" cx="59" cy="59" r="50"/><circle class="fg" id="fg" cx="59" cy="59" r="50"/>
-            </svg>
-            <div class="t" id="clock">0:00</div>
-          </div>
-          <div class="state pulse" id="state">Envoi des fichiers…</div>
-        </div>
-        <video id="out" hidden controls playsinline></video>
-      </div>
-      <div class="stats" id="stats" hidden>
-        <div class="stat"><small>Durée</small><b id="stTime">—</b></div>
-        <div class="stat"><small>Crédits</small><b id="stCred">—</b></div>
-        <div class="stat"><small>Coût ≈</small><b id="stUsd">—</b></div>
-      </div>
-      <div class="row" id="actions" hidden>
-        <a class="ghost" id="dl" download="trendswap-test.mp4">Télécharger</a>
-        <button class="ghost" id="again">Nouveau test</button>
-      </div>
-      <div class="note err" id="err" hidden></div>
-    </section>
+  <div class="card">
+    <p style="margin:0 0 10px"><b>Ce qui a changé</b></p>
+    <p style="margin:0 0 8px">Les clips tournent sur notre propre GPU. Le décor du reel d'origine est conservé au lieu d'être reconstruit, la résolution passe en 720x1280, et le coût de chaque clip s'affiche à l'écran avec le total dépensé.</p>
+    <p style="margin:0">L'accès est réservé aux administrateurs.</p>
   </div>
 
-  <div class="note"><b>C'est un seul test, sur l'API hébergée Kling 2.6 (kie.ai).</b> Il prouve le principe : mouvement, gestes, expressions et lèvres du reel transférés sur la persona. Ce n'est ni notre modèle, ni notre décor, ni notre volume. La version pour la production, SCAIL-2 sur notre propre GPU RunPod (décor du reel conservé, pas de filtre tiers, quelques centimes par clip), est prête à être montée et attend le budget RunPod.</div>
-
-  <p class="foot">Hébergé sur GitHub Pages · <a href="https://github.com/hatimhtm/deepfake-test">code source</a> · aucune donnée n'est stockée ici.</p>
+  <p class="foot">Rien n'est stocké sur cette page. <a href="https://github.com/hatimhtm/deepfake-test">Code source</a>.</p>
 </div>
-
-<script>
-const API = "https://api.kie.ai/api/v1";
-const UP  = "https://kieai.redpandaai.co/api/file-stream-upload";
-const USD_PER_CREDIT = 0.005;
-const $ = (s) => document.querySelector(s);
-const key = $("#key"), fImg = $("#fImg"), fVid = $("#fVid"), dImg = $("#dImg"), dVid = $("#dVid");
-const go = $("#go"), est = $("#est");
-let img = null, vid = null, vidSecs = 0, orient = "video", mode = "720p", audioSrc = null;
-
-// The key stays in this browser. A demo page on a public host has nowhere
-// safer to put it, and pasting it once beats pasting it every time.
-try { key.value = localStorage.getItem("kie_key") || ""; } catch {}
-key.addEventListener("input", () => { try { localStorage.setItem("kie_key", key.value.trim()); } catch {} refresh(); checkCredit(); });
-
-function H() { return { Authorization: "Bearer " + key.value.trim() }; }
-async function checkCredit() {
-  const k = key.value.trim(); if (k.length < 20) return;
-  try {
-    const r = await fetch(API + "/chat/credit", { headers: H() }); const j = await r.json();
-    if (typeof j.data === "number") $("#creditTag").textContent = j.data.toLocaleString("fr-FR") + " crédits";
-    else $("#creditTag").textContent = "clé refusée";
-  } catch { $("#creditTag").textContent = "kie.ai injoignable"; }
-}
-
-function preview(drop, file, isVideo) {
-  drop.querySelector("img,video")?.remove();
-  drop.querySelector(".meta")?.remove();
-  const el = document.createElement(isVideo ? "video" : "img");
-  el.src = URL.createObjectURL(file);
-  if (isVideo) { el.muted = true; el.loop = true; el.playsInline = true; el.autoplay = true; }
-  drop.appendChild(el); drop.classList.add("has");
-  const meta = document.createElement("div"); meta.className = "meta";
-  meta.textContent = file.name + " · " + (file.size / 1048576).toFixed(1) + " Mo";
-  drop.appendChild(meta);
-  return el;
-}
-
-fImg.addEventListener("change", () => { img = fImg.files[0] || null; if (img) preview(dImg, img, false); refresh(); });
-fVid.addEventListener("change", () => {
-  vid = fVid.files[0] || null; if (!vid) return refresh();
-  const el = preview(dVid, vid, true);
-  el.addEventListener("loadedmetadata", () => { vidSecs = el.duration; refresh(); }, { once: true });
-});
-for (const [d, f] of [[dImg, fImg], [dVid, fVid]]) {
-  d.addEventListener("dragover", (e) => { e.preventDefault(); d.classList.add("over"); });
-  d.addEventListener("dragleave", () => d.classList.remove("over"));
-  d.addEventListener("drop", (e) => { e.preventDefault(); d.classList.remove("over"); if (e.dataTransfer.files[0]) { f.files = e.dataTransfer.files; f.dispatchEvent(new Event("change")); } });
-}
-document.querySelectorAll(".chip[data-o]").forEach((c) => c.addEventListener("click", () => { orient = c.dataset.o; document.querySelectorAll(".chip[data-o]").forEach((x) => x.setAttribute("aria-pressed", x === c)); refresh(); }));
-document.querySelectorAll(".chip[data-m]").forEach((c) => c.addEventListener("click", () => { mode = c.dataset.m; document.querySelectorAll(".chip[data-m]").forEach((x) => x.setAttribute("aria-pressed", x === c)); refresh(); }));
-
-function refresh() {
-  const k = key.value.trim().length >= 20;
-  $("#s1").classList.toggle("done", k);
-  $("#s2").classList.toggle("done", !!(img && vid));
-  const maxS = orient === "image" ? 10 : 30;
-  const tooLong = vidSecs > maxS + 0.5, tooShort = vid && vidSecs > 0 && vidSecs < 3;
-  const tooBig = (vid && vid.size > 100 * 1048576) || (img && img.size > 10 * 1048576);
-  go.disabled = !(k && img && vid && vidSecs > 0 && !tooLong && !tooShort && !tooBig);
-  if (vidSecs > 0) {
-    const cr = Math.ceil(vidSecs) * (mode === "1080p" ? 12 : 8);
-    est.textContent = `${vidSecs.toFixed(1)} s · ~${cr} crédits · ~${(cr * USD_PER_CREDIT).toFixed(2)} $` + (tooLong ? ` · trop long (max ${maxS} s)` : tooShort ? " · trop court (min 3 s)" : tooBig ? " · fichier trop lourd" : "");
-  } else est.textContent = "—";
-}
-
-async function upload(file) {
-  const fd = new FormData(); fd.append("file", file, file.name); fd.append("uploadPath", "trendswap-test");
-  const r = await fetch(UP, { method: "POST", headers: H(), body: fd });
-  const j = await r.json().catch(() => ({}));
-  if (!r.ok || !j?.data?.downloadUrl) throw new Error("Envoi refusé : " + (j.msg || r.status));
-  return j.data.downloadUrl;
-}
-
-let timer = null, t0 = 0;
-function setState(s) { $("#state").textContent = s; }
-function tick() {
-  const s = Math.floor((Date.now() - t0) / 1000);
-  $("#clock").textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
-  // 7 minutes is the honest expectation; the ring fills to 95% and waits.
-  $("#fg").style.strokeDashoffset = 314 - 314 * Math.min(.95, s / 420);
-}
-
-async function run() {
-  go.disabled = true; $("#err").hidden = true; $("#idle").hidden = true; $("#out").hidden = true;
-  $("#stats").hidden = true; $("#actions").hidden = true; $("#prog").hidden = false;
-  t0 = Date.now(); timer = setInterval(tick, 1000); tick();
-  let before = null;
-  try {
-    try { before = (await (await fetch(API + "/chat/credit", { headers: H() })).json()).data; } catch {}
-    setState("Envoi de la persona…"); const imgUrl = await upload(img);
-    setState("Envoi du reel…");       const vidUrl = await upload(vid);
-    setState("Création de la tâche…");
-    const c = await fetch(API + "/jobs/createTask", { method: "POST", headers: { ...H(), "Content-Type": "application/json" }, body: JSON.stringify({
-      model: "kling-2.6/motion-control",
-      input: {
-        prompt: "The woman from the reference image performs exactly the motion, gestures, head movements, lip movements and facial expressions of the reference video. Keep her identity, hair and outfit from the image. Natural handheld phone footage, realistic skin, no text.",
-        input_urls: [imgUrl], video_urls: [vidUrl], character_orientation: orient, mode,
-      } }) });
-    const cj = await c.json(); const taskId = cj?.data?.taskId;
-    if (!taskId) throw new Error("Tâche refusée : " + (cj.msg || JSON.stringify(cj).slice(0, 200)));
-    setState("Génération en cours… (5 à 7 min, laisse l'onglet ouvert)");
-    let url = "";
-    for (let i = 0; i < 300; i++) {
-      await new Promise((r) => setTimeout(r, 5000));
-      const j = await (await fetch(`${API}/jobs/recordInfo?taskId=${taskId}`, { headers: H() })).json();
-      const st = j?.data?.state;
-      if (st === "success") { url = JSON.parse(j.data.resultJson || "{}")?.resultUrls?.[0] || ""; break; }
-      if (st === "fail") throw new Error("Génération échouée : " + (j.data.failMsg || "sans détail"));
-      if (i % 12 === 11) setState(`Toujours en cours… ${Math.round(i * 5 / 60)} min`);
-    }
-    if (!url) throw new Error("Délai dépassé");
-    clearInterval(timer); $("#fg").style.strokeDashoffset = 0;
-    const secs = Math.round((Date.now() - t0) / 1000);
-    let after = null; try { after = (await (await fetch(API + "/chat/credit", { headers: H() })).json()).data; } catch {}
-    const spent = before != null && after != null ? before - after : null;
-    $("#prog").hidden = true;
-    const out = $("#out"); out.src = url; out.hidden = false;
-    // The API returns a silent clip. The original audio is played underneath
-    // from the source file, kept in sync with the result.
-    audioSrc?.remove(); audioSrc = document.createElement("video"); audioSrc.src = URL.createObjectURL(vid); audioSrc.hidden = true; document.body.appendChild(audioSrc);
-    out.onplay = () => { audioSrc.currentTime = out.currentTime; audioSrc.play().catch(() => {}); };
-    out.onpause = () => audioSrc.pause(); out.onseeked = () => { audioSrc.currentTime = out.currentTime; };
-    out.play().catch(() => {});
-    $("#stTime").textContent = `${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, "0")}`;
-    $("#stCred").textContent = spent != null ? spent : "—";
-    $("#stUsd").textContent = spent != null ? (spent * USD_PER_CREDIT).toFixed(2) + " $" : "—";
-    $("#stats").hidden = false; $("#actions").hidden = false; $("#dl").href = url; $("#s3").classList.add("done");
-    checkCredit();
-  } catch (e) {
-    clearInterval(timer); $("#prog").hidden = true; $("#idle").hidden = false;
-    $("#err").textContent = e.message || String(e); $("#err").hidden = false; go.disabled = false;
-  }
-}
-go.addEventListener("click", run);
-$("#again").addEventListener("click", () => { $("#out").hidden = true; $("#out").pause(); $("#stats").hidden = true; $("#actions").hidden = true; $("#idle").hidden = false; $("#s3").classList.remove("done"); go.disabled = false; refresh(); });
-refresh(); checkCredit();
-</script>
 </body>
 </html>
