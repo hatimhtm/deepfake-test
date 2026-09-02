@@ -1,0 +1,22 @@
+# Everything the Wan-Animate graph loads lives on the network volume, so the
+# image stays small and a model change never means a rebuild.
+#
+# The stock file lists checkpoints/loras/vae and little else; diffusion_models,
+# text_encoders, detection and sam2 are added here because the graph needs them
+# and ComfyUI will not look in a folder nobody declared.
+runpod_worker_comfy:
+  base_path: /runpod-volume
+  checkpoints: models/checkpoints/
+  clip: models/text_encoders/
+  text_encoders: models/text_encoders/
+  clip_vision: models/clip_vision/
+  configs: models/configs/
+  controlnet: models/controlnet/
+  detection: models/detection/
+  embeddings: models/embeddings/
+  loras: models/loras/
+  sam2: models/sam2/
+  upscale_models: models/upscale_models/
+  vae: models/vae/
+  unet: models/diffusion_models/
+  diffusion_models: models/diffusion_models/
