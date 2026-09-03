@@ -7,8 +7,15 @@
 runpod_worker_comfy:
   base_path: /runpod-volume
   checkpoints: models/checkpoints/
-  clip: models/text_encoders/
-  text_encoders: models/text_encoders/
+  # Two folders each: CloneOS's stock worker files Qwen's weights under unet/
+  # and clip/, this worker's Wan set lives under diffusion_models/ and
+  # text_encoders/, and both lanes run on the same volume.
+  clip: |
+    models/text_encoders/
+    models/clip/
+  text_encoders: |
+    models/text_encoders/
+    models/clip/
   clip_vision: models/clip_vision/
   configs: models/configs/
   controlnet: models/controlnet/
@@ -18,5 +25,9 @@ runpod_worker_comfy:
   sam2: models/sam2/
   upscale_models: models/upscale_models/
   vae: models/vae/
-  unet: models/diffusion_models/
-  diffusion_models: models/diffusion_models/
+  unet: |
+    models/diffusion_models/
+    models/unet/
+  diffusion_models: |
+    models/diffusion_models/
+    models/unet/

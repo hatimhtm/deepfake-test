@@ -136,6 +136,20 @@ def handler(job):
             return {"error": "ComfyUI did not come up"}
         return {"object_info": _object_info(inp.get("nodes") or [])}
 
+    # What is actually on the volume. Two lanes now share it and guessing
+    # which folder a checkpoint landed in has already cost a rebuild.
+    if inp.get("op") == "ls":
+        root = os.path.join("/runpod-volume", str(inp.get("path") or "models").lstrip("/"))
+        out = []
+        for base, dirs, names in os.walk(root):
+            depth = base[len(root):].count(os.sep)
+            for n in sorted(names):
+                p = os.path.join(base, n)
+                out.append({"file": os.path.relpath(p, root), "bytes": os.path.getsize(p)})
+            if depth >= int(inp.get("depth") or 2):
+                dirs[:] = []
+        return {"root": root, "files": out[:2000]}
+
     workflow = inp.get("workflow")
     if not isinstance(workflow, dict):
         return {"error": "input.workflow (API format) is required"}
