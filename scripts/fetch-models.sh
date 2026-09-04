@@ -81,6 +81,31 @@ mkdir -p "$VOL/models/SEEDVR2"
 get numz/SeedVR2_comfyUI   seedvr2_ema_7b_fp8_e4m3fn.safetensors   SEEDVR2
 get numz/SeedVR2_comfyUI   ema_vae_fp16.safetensors                SEEDVR2
 
+# --- The gaps found by auditing Tom Eden's 26 workflow JSONs against this
+# volume (2026-09-04). Only the files his SFW lanes name; his per-creature
+# motion LoRAs and detectors are deliberately not mirrored.
+mkdir -p "$VOL/models"/{ultralytics/bbox,ultralytics/segm,sams,upscale_models,interpolation/gimm-vfi}
+
+# The exact SeedVR2 build his upscale graph loads: fp8 with the last block in
+# fp16, which the pack's own notes credit with fewer artifacts than plain fp8.
+get AInVFX/SeedVR2_comfyUI  seedvr2_ema_7b_fp8_e4m3fn_mixed_block35_fp16.safetensors  SEEDVR2
+
+# QWEN Edit v5's second LoRA: turn the persona to another angle.
+get fal/Qwen-Image-Edit-2511-Multiple-Angles-LoRA  qwen-image-edit-2511-multiple-angles-lora.safetensors  loras  Qwen-edit-2511-multiple-angles.safetensors
+
+# GIMM-VFI, the interpolator his transfer graph ends on (we have been using
+# RIFE). Needs its two optical-flow helpers alongside it.
+get Kijai/GIMM-VFI_safetensors  gimmvfi_r_arb_lpips_fp32.safetensors   interpolation/gimm-vfi
+get Kijai/GIMM-VFI_safetensors  raft-things_fp32.safetensors           interpolation/gimm-vfi
+get Kijai/GIMM-VFI_safetensors  flowformer_sintel_fp32.safetensors     interpolation/gimm-vfi
+
+# FaceDetailer: a face detector and SAM to cut the mask it refines.
+get Bingsu/adetailer  face_yolov8m.pt  ultralytics/bbox
+get HCMUE-Research/SAM-vit-h  sam_vit_b_01ec64.pth  sams
+
+# The ESRGAN upscaler his image graphs use before the diffusion upscale.
+get lokCX/4x-Ultrasharp  4x-UltraSharp.pth  upscale_models
+
 say "=== volume after ==="
 df -h "$VOL" | tail -1 | tee -a "$LOG"
 find "$VOL/models" -maxdepth 2 -type f -newermt '-1 day' -printf '%10s  %p\n' 2>/dev/null | tee -a "$LOG"

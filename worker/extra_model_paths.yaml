@@ -36,3 +36,9 @@ runpod_worker_comfy:
   # insensitively. Without this line the 8 GB DiT on the volume is invisible
   # and the first upscale failed validation with "model: value not in list".
   seedvr2: models/SEEDVR2/
+  # FaceDetailer's detectors and SAM, GIMM-VFI's interpolation weights, and
+  # ESRGAN upscalers — all named by Tom's graphs.
+  ultralytics: models/ultralytics/
+  ultralytics_bbox: models/ultralytics/bbox/
+  ultralytics_segm: models/ultralytics/segm/
+  sams: models/sams/

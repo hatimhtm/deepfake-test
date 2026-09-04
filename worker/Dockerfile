@@ -14,6 +14,22 @@ ARG WAP_SHA=0e0b6a2a555625acf4d4aefb780e27d06937132f
 ARG SAM2_SHA=0c35fff5f382803e2310103357b5e985f5437f32
 ARG SEEDVR_SHA=4490bd1f482e026674543386bb2a4d176da245b9
 ARG VFI_SHA=26545cc2dd95bc3d27f056016300673bdeee78f5
+# Tom Eden's workflows use 175 node types; this worker had 77 of them. These
+# are the packs behind the gaps that matter for the lanes we run or want:
+# Kijai's Wan wrapper (their I2V engine and T5 loader), the tiling and maths
+# helpers their upscale chain is built from, FaceDetailer for face polish, and
+# GIMM-VFI, the interpolator they use instead of RIFE.
+ARG WVW_SHA=088128b224242e110d3906c6750e9a3a348a659b
+ARG ESS_SHA=9d9f4bedfc9f0321c19faf71855e228c93bd0dc9
+ARG EASY_SHA=8b522f121d63524baaf6dce51a155edcc980fb59
+ARG IMPACT_SHA=429d0159ad429e64d2b3916e6e7be9c22d025c3c
+ARG IMPACTSUB_SHA=50c7b71a6a224734cc9b21963c6d1926816a97f1
+ARG TTP_SHA=c8889e40e90e293226cc6810c7d27b9c17300da6
+ARG GIMM_SHA=4c9a3123762af85e7c796e41737da0b70c75d72d
+ARG RGTHREE_SHA=2c5342a8cb0eaecaabf61435a5f37dd594c510ba
+ARG INPAINT_SHA=606e2b4fd83fc44e1f0b403e1f076501db8c3749
+ARG PYSSSSS_SHA=609f3afaa74b2f88ef9ce8d939626065e3247469
+ARG CROLL_SHA=d78b780ae43fcf8c6b7c6505e6ffb4584281ceca
 
 RUN set -eux; cd /comfyui/custom_nodes; \
     git clone https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite.git   && cd ComfyUI-VideoHelperSuite   && git checkout ${VHS_SHA}  && cd ..; \
@@ -22,6 +38,17 @@ RUN set -eux; cd /comfyui/custom_nodes; \
     git clone https://github.com/kijai/ComfyUI-segment-anything-2.git       && cd ComfyUI-segment-anything-2  && git checkout ${SAM2_SHA} && cd ..; \
     git clone https://github.com/Fannovel16/ComfyUI-Frame-Interpolation.git && cd ComfyUI-Frame-Interpolation && git checkout ${VFI_SHA}  && cd ..; \
     git clone https://github.com/numz/ComfyUI-SeedVR2_VideoUpscaler.git   && cd ComfyUI-SeedVR2_VideoUpscaler  && git checkout ${SEEDVR_SHA} && cd ..; \
+    git clone https://github.com/kijai/ComfyUI-WanVideoWrapper.git          && cd ComfyUI-WanVideoWrapper     && git checkout ${WVW_SHA}       && cd ..; \
+    git clone https://github.com/cubiq/ComfyUI_essentials.git              && cd ComfyUI_essentials          && git checkout ${ESS_SHA}       && cd ..; \
+    git clone https://github.com/yolain/ComfyUI-Easy-Use.git               && cd ComfyUI-Easy-Use            && git checkout ${EASY_SHA}      && cd ..; \
+    git clone https://github.com/ltdrdata/ComfyUI-Impact-Pack.git          && cd ComfyUI-Impact-Pack         && git checkout ${IMPACT_SHA}    && cd ..; \
+    git clone https://github.com/ltdrdata/ComfyUI-Impact-Subpack.git       && cd ComfyUI-Impact-Subpack      && git checkout ${IMPACTSUB_SHA} && cd ..; \
+    git clone https://github.com/TTPlanetPig/Comfyui_TTP_Toolset.git       && cd Comfyui_TTP_Toolset         && git checkout ${TTP_SHA}       && cd ..; \
+    git clone https://github.com/kijai/ComfyUI-GIMM-VFI.git                && cd ComfyUI-GIMM-VFI            && git checkout ${GIMM_SHA}      && cd ..; \
+    git clone https://github.com/rgthree/rgthree-comfy.git                 && cd rgthree-comfy               && git checkout ${RGTHREE_SHA}   && cd ..; \
+    git clone https://github.com/lquesada/ComfyUI-Inpaint-CropAndStitch.git && cd ComfyUI-Inpaint-CropAndStitch && git checkout ${INPAINT_SHA} && cd ..; \
+    git clone https://github.com/pythongosssss/ComfyUI-Custom-Scripts.git  && cd ComfyUI-Custom-Scripts      && git checkout ${PYSSSSS_SHA}   && cd ..; \
+    git clone https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes.git  && cd ComfyUI_Comfyroll_CustomNodes && git checkout ${CROLL_SHA}   && cd ..; \
     rm -rf */.git
 
 # The node packs' own dependencies, then onnxruntime on the GPU: ViTPose and the
