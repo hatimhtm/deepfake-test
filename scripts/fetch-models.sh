@@ -76,6 +76,11 @@ get Comfy-Org/SCAIL-2   loras/wan2.1_SCAIL_2_DPO_lora_bf16.safetensors          
 get Comfy-Org/SCAIL-2   loras/wan2.1_SCAIL_2_relight_lora_bf16.safetensors           loras
 get Comfy-Org/sam3.1    checkpoints/sam3.1_multiplex_fp16.safetensors                checkpoints
 
+# SeedVR2 — the video upscaler Tom Eden's pipeline ends with. 7B fp8.
+mkdir -p "$VOL/models/SEEDVR2"
+get numz/SeedVR2_comfyUI   seedvr2_ema_7b_fp8_e4m3fn.safetensors   SEEDVR2
+get numz/SeedVR2_comfyUI   ema_vae_fp16.safetensors                SEEDVR2
+
 say "=== volume after ==="
 df -h "$VOL" | tail -1 | tee -a "$LOG"
 find "$VOL/models" -maxdepth 2 -type f -newermt '-1 day' -printf '%10s  %p\n' 2>/dev/null | tee -a "$LOG"
