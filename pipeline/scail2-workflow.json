@@ -1,0 +1,837 @@
+{
+ "66": {
+  "class_type": "VAEDecode",
+  "inputs": {
+   "samples": [
+    "63",
+    0
+   ],
+   "vae": [
+    "276",
+    0
+   ]
+  },
+  "_meta": {
+   "title": "VAEDecode"
+  }
+ },
+ "215": {
+  "class_type": "WanSCAILToVideo",
+  "inputs": {
+   "positive": [
+    "3",
+    0
+   ],
+   "negative": [
+    "4",
+    0
+   ],
+   "vae": [
+    "276",
+    0
+   ],
+   "width": [
+    "89",
+    1
+   ],
+   "height": [
+    "89",
+    2
+   ],
+   "length": 81,
+   "batch_size": 1,
+   "pose_strength": 1,
+   "pose_start": 0,
+   "pose_end": 1,
+   "video_frame_offset": 0,
+   "previous_frame_count": [
+    "173",
+    0
+   ],
+   "pose_video": [
+    "89",
+    0
+   ],
+   "pose_video_mask": [
+    "104",
+    0
+   ],
+   "replacement_mode": 5,
+   "reference_image": [
+    "131",
+    0
+   ],
+   "reference_image_mask": [
+    "104",
+    1
+   ],
+   "clip_vision_output": [
+    "76",
+    0
+   ]
+  },
+  "_meta": {
+   "title": "WanSCAILToVideo"
+  }
+ },
+ "130": {
+  "class_type": "SAM3_TrackToMask",
+  "inputs": {
+   "track_data": [
+    "91",
+    0
+   ],
+   "object_indices": ""
+  },
+  "_meta": {
+   "title": "SAM3_TrackToMask"
+  }
+ },
+ "144": {
+  "class_type": "EmptyImage",
+  "inputs": {
+   "width": [
+    "89",
+    1
+   ],
+   "height": [
+    "89",
+    2
+   ],
+   "batch_size": 1,
+   "color": 0
+  },
+  "_meta": {
+   "title": "EmptyImage"
+  }
+ },
+ "73": {
+  "class_type": "GetImageRangeFromBatch",
+  "inputs": {
+   "start_index": [
+    "173",
+    0
+   ],
+   "num_frames": 4096,
+   "images": [
+    "66",
+    0
+   ]
+  },
+  "_meta": {
+   "title": "GetImageRangeFromBatch"
+  }
+ },
+ "211": {
+  "class_type": "ResizeImageMaskNode",
+  "inputs": {
+   "input": [
+    "89",
+    0
+   ],
+   "scale_method": "scale by multiplier"
+  },
+  "_meta": {
+   "title": "ResizeImageMaskNode"
+  }
+ },
+ "126": {
+  "class_type": "ImageConcatMulti",
+  "inputs": {
+   "inputcount": 2,
+   "image_1": [
+    "125",
+    0
+   ],
+   "direction": "left",
+   "match_image_size": true,
+   "image_2": [
+    "104",
+    1
+   ]
+  },
+  "_meta": {
+   "title": "ImageConcatMulti"
+  }
+ },
+ "79": {
+  "class_type": "GetImageRangeFromBatch",
+  "inputs": {
+   "start_index": -1,
+   "num_frames": 1,
+   "images": [
+    "6",
+    0
+   ]
+  },
+  "_meta": {
+   "title": "GetImageRangeFromBatch"
+  }
+ },
+ "78": {
+  "class_type": "ColorTransfer",
+  "inputs": {
+   "image_target": [
+    "73",
+    0
+   ],
+   "image_ref": [
+    "79",
+    0
+   ],
+   "method": "reinhard_lab",
+   "strength": "target_frame"
+  },
+  "_meta": {
+   "title": "ColorTransfer"
+  }
+ },
+ "18": {
+  "class_type": "BasicScheduler",
+  "inputs": {
+   "model": [
+    "95",
+    0
+   ],
+   "scheduler": "beta",
+   "steps": 6,
+   "denoise": 1
+  },
+  "_meta": {
+   "title": "BasicScheduler"
+  }
+ },
+ "27": {
+  "class_type": "KSamplerSelect",
+  "inputs": {
+   "sampler_name": "euler_ancestral"
+  },
+  "_meta": {
+   "title": "KSamplerSelect"
+  }
+ },
+ "4": {
+  "class_type": "CLIPTextEncode",
+  "inputs": {
+   "text": "",
+   "clip": [
+    "277",
+    0
+   ]
+  },
+  "_meta": {
+   "title": "CLIPTextEncode"
+  }
+ },
+ "91": {
+  "class_type": "SAM3_VideoTrack",
+  "inputs": {
+   "images": [
+    "132",
+    0
+   ],
+   "model": [
+    "282",
+    0
+   ],
+   "detection_threshold": 0.5,
+   "max_objects": 5,
+   "detect_interval": 2,
+   "conditioning": [
+    "87",
+    0
+   ]
+  },
+  "_meta": {
+   "title": "SAM3_VideoTrack"
+  }
+ },
+ "289": {
+  "class_type": "PathchSageAttentionKJ",
+  "inputs": {
+   "model": [
+    "279",
+    0
+   ],
+   "sage_attention": "auto",
+   "allow_compile": false
+  },
+  "_meta": {
+   "title": "PathchSageAttentionKJ"
+  }
+ },
+ "95": {
+  "class_type": "ModelSamplingSD3",
+  "inputs": {
+   "model": [
+    "289",
+    0
+   ],
+   "shift": 5
+  },
+  "_meta": {
+   "title": "ModelSamplingSD3"
+  }
+ },
+ "131": {
+  "class_type": "ImageCompositeMasked",
+  "inputs": {
+   "destination": [
+    "144",
+    0
+   ],
+   "source": [
+    "132",
+    0
+   ],
+   "x": 0,
+   "y": 0,
+   "resize_source": false,
+   "mask": [
+    "130",
+    0
+   ]
+  },
+  "_meta": {
+   "title": "ImageCompositeMasked"
+  }
+ },
+ "85": {
+  "class_type": "SAM3_VideoTrack",
+  "inputs": {
+   "images": [
+    "89",
+    0
+   ],
+   "model": [
+    "282",
+    0
+   ],
+   "detection_threshold": 0.5,
+   "max_objects": 5,
+   "detect_interval": 2,
+   "conditioning": [
+    "87",
+    0
+   ]
+  },
+  "_meta": {
+   "title": "SAM3_VideoTrack"
+  }
+ },
+ "216": {
+  "class_type": "WanSCAILToVideo",
+  "inputs": {
+   "positive": [
+    "3",
+    0
+   ],
+   "negative": [
+    "4",
+    0
+   ],
+   "vae": [
+    "276",
+    0
+   ],
+   "width": [
+    "89",
+    1
+   ],
+   "height": [
+    "89",
+    2
+   ],
+   "length": 73,
+   "batch_size": 1,
+   "pose_strength": 1,
+   "pose_start": 0,
+   "pose_end": 1,
+   "video_frame_offset": [
+    "215",
+    3
+   ],
+   "previous_frame_count": [
+    "173",
+    0
+   ],
+   "pose_video": [
+    "89",
+    0
+   ],
+   "pose_video_mask": [
+    "104",
+    0
+   ],
+   "replacement_mode": 5,
+   "reference_image": [
+    "131",
+    0
+   ],
+   "reference_image_mask": [
+    "104",
+    1
+   ],
+   "clip_vision_output": [
+    "76",
+    0
+   ],
+   "previous_frames": [
+    "6",
+    0
+   ]
+  },
+  "_meta": {
+   "title": "WanSCAILToVideo"
+  }
+ },
+ "124": {
+  "class_type": "ImageConcatMulti",
+  "inputs": {
+   "inputcount": 2,
+   "image_1": [
+    "211",
+    0
+   ],
+   "direction": "left",
+   "match_image_size": true,
+   "image_2": [
+    "104",
+    0
+   ]
+  },
+  "_meta": {
+   "title": "ImageConcatMulti"
+  }
+ },
+ "89": {
+  "class_type": "ImageResizeKJv2",
+  "inputs": {
+   "image": [
+    "274",
+    0
+   ],
+   "width": [
+    "272",
+    0
+   ],
+   "height": [
+    "273",
+    0
+   ],
+   "upscale_method": "lanczos",
+   "keep_proportion": "crop",
+   "pad_color": "0, 0, 0",
+   "crop_position": "center",
+   "divisible_by": 16,
+   "device": "cpu"
+  },
+  "_meta": {
+   "title": "ImageResizeKJv2"
+  }
+ },
+ "282": {
+  "class_type": "CheckpointLoaderSimple",
+  "inputs": {
+   "ckpt_name": "sam3.1_multiplex_fp16.safetensors"
+  },
+  "_meta": {
+   "title": "CheckpointLoaderSimple"
+  }
+ },
+ "76": {
+  "class_type": "CLIPVisionEncode",
+  "inputs": {
+   "clip_vision": [
+    "281",
+    0
+   ],
+   "image": [
+    "131",
+    0
+   ],
+   "crop": "none"
+  },
+  "_meta": {
+   "title": "CLIPVisionEncode"
+  }
+ },
+ "63": {
+  "class_type": "SamplerCustom",
+  "inputs": {
+   "model": [
+    "95",
+    0
+   ],
+   "add_noise": true,
+   "noise_seed": 0,
+   "cfg": 1,
+   "positive": [
+    "216",
+    0
+   ],
+   "negative": [
+    "216",
+    1
+   ],
+   "sampler": [
+    "27",
+    0
+   ],
+   "sigmas": [
+    "18",
+    0
+   ],
+   "latent_image": [
+    "216",
+    2
+   ]
+  },
+  "_meta": {
+   "title": "SamplerCustom"
+  }
+ },
+ "125": {
+  "class_type": "ImageConcatMulti",
+  "inputs": {
+   "inputcount": 2,
+   "image_1": [
+    "124",
+    0
+   ],
+   "direction": "left",
+   "match_image_size": true,
+   "image_2": [
+    "131",
+    0
+   ]
+  },
+  "_meta": {
+   "title": "ImageConcatMulti"
+  }
+ },
+ "277": {
+  "class_type": "CLIPLoader",
+  "inputs": {
+   "clip_name": "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+   "type": "wan",
+   "device": "default"
+  },
+  "_meta": {
+   "title": "CLIPLoader"
+  }
+ },
+ "87": {
+  "class_type": "CLIPTextEncode",
+  "inputs": {
+   "text": "woman ",
+   "clip": [
+    "282",
+    1
+   ]
+  },
+  "_meta": {
+   "title": "CLIPTextEncode"
+  }
+ },
+ "173": {
+  "class_type": "PrimitiveInt",
+  "inputs": {
+   "value": 5
+  },
+  "_meta": {
+   "title": "previous_frame_count"
+  }
+ },
+ "3": {
+  "class_type": "CLIPTextEncode",
+  "inputs": {
+   "text": "",
+   "clip": [
+    "277",
+    0
+   ]
+  },
+  "_meta": {
+   "title": "CLIPTextEncode"
+  }
+ },
+ "19": {
+  "class_type": "SamplerCustom",
+  "inputs": {
+   "model": [
+    "95",
+    0
+   ],
+   "add_noise": true,
+   "noise_seed": 1,
+   "cfg": 1,
+   "positive": [
+    "215",
+    0
+   ],
+   "negative": [
+    "215",
+    1
+   ],
+   "sampler": [
+    "27",
+    0
+   ],
+   "sigmas": [
+    "18",
+    0
+   ],
+   "latent_image": [
+    "215",
+    2
+   ]
+  },
+  "_meta": {
+   "title": "SamplerCustom"
+  }
+ },
+ "281": {
+  "class_type": "CLIPVisionLoader",
+  "inputs": {
+   "clip_name": "clip_vision_h.safetensors"
+  },
+  "_meta": {
+   "title": "CLIPVisionLoader"
+  }
+ },
+ "279": {
+  "class_type": "LoraLoaderModelOnly",
+  "inputs": {
+   "model": [
+    "278",
+    0
+   ],
+   "lora_name": "lightx2v_I2V_14B_480p_cfg_step_distill_rank64_bf16.safetensors",
+   "strength_model": 1.0000000000000002
+  },
+  "_meta": {
+   "title": "LoraLoaderModelOnly"
+  }
+ },
+ "6": {
+  "class_type": "VAEDecode",
+  "inputs": {
+   "samples": [
+    "19",
+    1
+   ],
+   "vae": [
+    "276",
+    0
+   ]
+  },
+  "_meta": {
+   "title": "VAEDecode"
+  }
+ },
+ "132": {
+  "class_type": "ImageResizeKJv2",
+  "inputs": {
+   "image": [
+    "286",
+    0
+   ],
+   "width": [
+    "272",
+    0
+   ],
+   "height": [
+    "273",
+    0
+   ],
+   "upscale_method": "lanczos",
+   "keep_proportion": "crop",
+   "pad_color": "0, 0, 0",
+   "crop_position": "center",
+   "divisible_by": 16,
+   "device": "cpu"
+  },
+  "_meta": {
+   "title": "ImageResizeKJv2"
+  }
+ },
+ "255": {
+  "class_type": "VHS_VideoCombine",
+  "inputs": {
+   "frame_rate": 40,
+   "loop_count": 0,
+   "filename_prefix": "scail",
+   "format": "video/h264-mp4",
+   "pingpong": false,
+   "save_output": true,
+   "audio": [
+    "274",
+    2
+   ],
+   "images": [
+    "300",
+    0
+   ]
+  },
+  "_meta": {
+   "title": "VHS_VideoCombine"
+  }
+ },
+ "104": {
+  "class_type": "SCAIL2ColoredMask",
+  "inputs": {
+   "driving_track_data": [
+    "85",
+    0
+   ],
+   "object_indices": "",
+   "sort_by": "left_to_right",
+   "replacement_mode": true,
+   "ref_track_data": [
+    "91",
+    0
+   ]
+  },
+  "_meta": {
+   "title": "SCAIL2ColoredMask"
+  }
+ },
+ "276": {
+  "class_type": "VAELoader",
+  "inputs": {
+   "vae_name": "wan_2.1_vae.safetensors"
+  },
+  "_meta": {
+   "title": "VAELoader"
+  }
+ },
+ "273": {
+  "class_type": "PrimitiveInt",
+  "inputs": {
+   "value": 1700
+  },
+  "_meta": {
+   "title": "Height"
+  }
+ },
+ "272": {
+  "class_type": "PrimitiveInt",
+  "inputs": {
+   "value": 833
+  },
+  "_meta": {
+   "title": "Width"
+  }
+ },
+ "274": {
+  "class_type": "VHS_LoadVideo",
+  "inputs": {
+   "video": "reel.mp4",
+   "force_rate": 20,
+   "custom_width": 0,
+   "custom_height": 0,
+   "frame_load_cap": 241,
+   "skip_first_frames": 0,
+   "select_every_nth": 1,
+   "format": "AnimateDiff"
+  },
+  "_meta": {
+   "title": "VHS_LoadVideo"
+  }
+ },
+ "286": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "persona.png"
+  },
+  "_meta": {
+   "title": "LoadImage"
+  }
+ },
+ "270": {
+  "class_type": "VHS_VideoCombine",
+  "inputs": {
+   "images": [
+    "6",
+    0
+   ],
+   "frame_rate": 16,
+   "loop_count": 0,
+   "filename_prefix": "SKYWANANIMATE",
+   "format": "video/h264-mp4",
+   "pingpong": false,
+   "save_output": false
+  },
+  "_meta": {
+   "title": "VHS_VideoCombine"
+  }
+ },
+ "269": {
+  "class_type": "VHS_VideoCombine",
+  "inputs": {
+   "images": [
+    "78",
+    0
+   ],
+   "frame_rate": 16,
+   "loop_count": 0,
+   "filename_prefix": "SKYWANANIMATE",
+   "format": "video/h264-mp4",
+   "pingpong": false,
+   "save_output": false
+  },
+  "_meta": {
+   "title": "VHS_VideoCombine"
+  }
+ },
+ "88": {
+  "class_type": "VHS_VideoCombine",
+  "inputs": {
+   "images": [
+    "126",
+    0
+   ],
+   "frame_rate": 16,
+   "loop_count": 0,
+   "filename_prefix": "SKYWANANIMATE",
+   "format": "video/h264-mp4",
+   "pingpong": false,
+   "save_output": false
+  },
+  "_meta": {
+   "title": "VHS_VideoCombine"
+  }
+ },
+ "278": {
+  "class_type": "UNETLoader",
+  "inputs": {
+   "unet_name": "wan2.1_14B_SCAIL_2_fp8_scaled.safetensors",
+   "weight_dtype": "default"
+  },
+  "_meta": {
+   "title": "UNETLoader"
+  }
+ },
+ "300": {
+  "class_type": "RIFE VFI",
+  "inputs": {
+   "ckpt_name": "rife49.pth",
+   "frames": [
+    "262",
+    0
+   ],
+   "clear_cache_after_n_frames": 10,
+   "multiplier": 2,
+   "fast_mode": true,
+   "ensemble": true,
+   "scale_factor": 1,
+   "dtype": "float32",
+   "batch_size": 1,
+   "torch_compile": false
+  },
+  "_meta": {
+   "title": "RIFE VFI"
+  }
+ }
+}

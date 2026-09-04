@@ -20,7 +20,7 @@ import json
 import sys
 from collections import defaultdict
 
-EDITOR_ONLY = {"Note", "MarkdownNote", "Reroute", "PrimitiveNode"}
+EDITOR_ONLY = {"Note", "MarkdownNote", "Reroute", "PrimitiveNode", "PreviewAny", "PreviewImage"}
 CONTROLS = {"fixed", "increment", "decrement", "randomize"}
 
 
@@ -135,6 +135,9 @@ def build(g, oi):
                 # Skip the hidden control that follows a seeded widget.
                 if wi < len(widgets) and widgets[wi] in CONTROLS:
                     wi += 1
+        # Literals inlined by the prep pass in place of dropped constant nodes.
+        for k, v in (n.get("_inline") or {}).items():
+            out[k] = v
         api[str(n["id"])] = {"class_type": t, "inputs": out, "_meta": {"title": n.get("title") or t}}
 
     # Drop anything nothing reaches: the editor keeps parked nodes, /prompt
