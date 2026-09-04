@@ -31,3 +31,8 @@ runpod_worker_comfy:
   diffusion_models: |
     models/diffusion_models/
     models/unet/
+  # SeedVR2's loader registers its own folder as "seedvr2" under the image's
+  # models dir and then scans every registered path of that name, case-
+  # insensitively. Without this line the 8 GB DiT on the volume is invisible
+  # and the first upscale failed validation with "model: value not in list".
+  seedvr2: models/SEEDVR2/
