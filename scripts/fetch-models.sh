@@ -67,6 +67,15 @@ get Comfy-Org/Wan_2.2_ComfyUI_Repackaged  split_files/loras/wan2.2_animate_14B_r
 get Comfy-Org/Wan_2.2_ComfyUI_Repackaged  split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors          text_encoders
 get Kijai/WanVideo_comfy_fp8_scaled       Wan22Animate/Wan2_2-Animate-14B_fp8_scaled_e4m3fn_KJ_v2.safetensors       diffusion_models
 
+# SCAIL-2 — Tom Eden's character-transfer engine, for an A/B against Wan-Animate.
+# fp8 scaled rather than the 33 GB fp16 his graph names; the worker already
+# carries every core node it needs. SAM3.1 drives its character mask.
+mkdir -p "$VOL/models/checkpoints"
+get Comfy-Org/SCAIL-2   diffusion_models/wan2.1_14B_SCAIL_2_fp8_scaled.safetensors   diffusion_models
+get Comfy-Org/SCAIL-2   loras/wan2.1_SCAIL_2_DPO_lora_bf16.safetensors               loras
+get Comfy-Org/SCAIL-2   loras/wan2.1_SCAIL_2_relight_lora_bf16.safetensors           loras
+get Comfy-Org/sam3.1    checkpoints/sam3.1_multiplex_fp16.safetensors                checkpoints
+
 say "=== volume after ==="
 df -h "$VOL" | tail -1 | tee -a "$LOG"
 find "$VOL/models" -maxdepth 2 -type f -newermt '-1 day' -printf '%10s  %p\n' 2>/dev/null | tee -a "$LOG"
