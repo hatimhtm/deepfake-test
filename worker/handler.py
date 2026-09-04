@@ -222,8 +222,14 @@ def handler(job):
                 entry["error"] = "no upload URL left for this file, and too big to inline"
             outputs.append(entry)
 
+    # What ComfyUI itself says each output node produced — the way to tell a
+    # graph that saved nothing from a scan that missed something.
+    reported = {}
+    for node, out in (h.get("outputs") or {}).items():
+        reported[node] = {k: v for k, v in out.items() if k in ("images", "gifs", "video", "audio", "text")}
     return {
         "outputs": outputs,
+        "reported": reported,
         "seconds": round(time.time() - started, 1),
         "prompt_id": prompt_id,
     }
