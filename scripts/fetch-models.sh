@@ -101,7 +101,7 @@ get Kijai/GIMM-VFI_safetensors  flowformer_sintel_fp32.safetensors     interpola
 
 # FaceDetailer: a face detector and SAM to cut the mask it refines.
 get Bingsu/adetailer  face_yolov8m.pt  ultralytics/bbox
-get HCMUE-Research/SAM-vit-h  sam_vit_b_01ec64.pth  sams
+get segments-arnaud/sam_vit_b  sam_vit_b_01ec64.pth  sams
 
 # The ESRGAN upscaler his image graphs use before the diffusion upscale.
 get lokCX/4x-Ultrasharp  4x-UltraSharp.pth  upscale_models
