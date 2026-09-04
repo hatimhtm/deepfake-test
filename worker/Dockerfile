@@ -30,6 +30,14 @@ ARG RGTHREE_SHA=2c5342a8cb0eaecaabf61435a5f37dd594c510ba
 ARG INPAINT_SHA=606e2b4fd83fc44e1f0b403e1f076501db8c3749
 ARG PYSSSSS_SHA=609f3afaa74b2f88ef9ce8d939626065e3247469
 ARG CROLL_SHA=d78b780ae43fcf8c6b7c6505e6ffb4584281ceca
+# Second round: the packs behind the last gaps that produce pixels — LayerStyle
+# (their scale/reel/person-mask helpers), SparkVSR (the other branch of their
+# upscale graph) and the SAM3 pack whose node names match their faceswap
+# graphs (PozzettiAndrea's, not yolain's, whose classes are spelled Sam3).
+ARG LS_SHA=5ba939099b33f998ecfbd63dcbbf089925b64a47
+ARG LSADV_SHA=7b678b401a38307a4a7e99ef6630bd48f9cecedb
+ARG SPARK_SHA=30f3378e5ddc172b85c3d8776a02e808f7694c28
+ARG SAM3_SHA=de0ff5d2c2ea435d29f800abfa568cffdfb94773
 
 RUN set -eux; cd /comfyui/custom_nodes; \
     git clone https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite.git   && cd ComfyUI-VideoHelperSuite   && git checkout ${VHS_SHA}  && cd ..; \
@@ -49,6 +57,10 @@ RUN set -eux; cd /comfyui/custom_nodes; \
     git clone https://github.com/lquesada/ComfyUI-Inpaint-CropAndStitch.git && cd ComfyUI-Inpaint-CropAndStitch && git checkout ${INPAINT_SHA} && cd ..; \
     git clone https://github.com/pythongosssss/ComfyUI-Custom-Scripts.git  && cd ComfyUI-Custom-Scripts      && git checkout ${PYSSSSS_SHA}   && cd ..; \
     git clone https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes.git  && cd ComfyUI_Comfyroll_CustomNodes && git checkout ${CROLL_SHA}   && cd ..; \
+    git clone https://github.com/chflame163/ComfyUI_LayerStyle.git         && cd ComfyUI_LayerStyle          && git checkout ${LS_SHA}        && cd ..; \
+    git clone https://github.com/chflame163/ComfyUI_LayerStyle_Advance.git && cd ComfyUI_LayerStyle_Advance  && git checkout ${LSADV_SHA}     && cd ..; \
+    git clone https://github.com/smthemex/ComfyUI_SparkVSR_SM.git          && cd ComfyUI_SparkVSR_SM         && git checkout ${SPARK_SHA}     && cd ..; \
+    git clone https://github.com/PozzettiAndrea/ComfyUI-SAM3.git           && cd ComfyUI-SAM3                && git checkout ${SAM3_SHA}      && cd ..; \
     rm -rf */.git
 
 # The node packs' own dependencies, then onnxruntime on the GPU: ViTPose and the
