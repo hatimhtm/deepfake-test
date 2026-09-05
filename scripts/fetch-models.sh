@@ -106,6 +106,12 @@ get segments-arnaud/sam_vit_b  sam_vit_b_01ec64.pth  sams
 # The ESRGAN upscaler his image graphs use before the diffusion upscale.
 get lokCX/4x-Ultrasharp  4x-UltraSharp.pth  upscale_models
 
+# --- The shared pieces the rest of Tom's menu needs. Four of his six
+# unported workflows load Z-Image Turbo and Flux's VAE between them; without
+# these two files none of them can run at all.
+get Comfy-Org/z_image_turbo   split_files/diffusion_models/z_image_turbo_bf16.safetensors   diffusion_models
+get Comfy-Org/Lumina_Image_2.0_Repackaged  split_files/vae/ae.safetensors  vae
+
 say "=== volume after ==="
 df -h "$VOL" | tail -1 | tee -a "$LOG"
 find "$VOL/models" -maxdepth 2 -type f -newermt '-1 day' -printf '%10s  %p\n' 2>/dev/null | tee -a "$LOG"
