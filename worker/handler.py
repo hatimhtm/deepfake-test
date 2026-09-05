@@ -244,6 +244,32 @@ def handler(job):
                 entry["error"] = "no upload URL left for this file, and too big to inline"
             outputs.append(entry)
 
+    # Keep chosen outputs on the volume, where a loader will find them next
+    # run. A trained LoRA is the case this exists for: it is written into
+    # ComfyUI's output folder, which no loader reads, and it is far too big to
+    # push through object storage and pull back — the first one was 307 MB and
+    # the signed PUT answered 400.
+    kept = []
+    keep_dirs = inp.get("keep_on_volume") or []
+    if isinstance(keep_dirs, str):
+        keep_dirs = [keep_dirs]
+    if keep_dirs:
+        for entry in outputs:
+            rel = entry["file"].replace("\\", "/")
+            top = rel.split("/")[0]
+            if top not in keep_dirs:
+                continue
+            src = os.path.join(OUTPUT_DIR, entry["file"])
+            dest = os.path.normpath(os.path.join("/runpod-volume/models", rel))
+            if not dest.startswith("/runpod-volume/models" + os.sep):
+                continue
+            os.makedirs(os.path.dirname(dest), exist_ok=True)
+            try:
+                shutil.copyfile(src, dest)
+                kept.append({"file": rel, "bytes": os.path.getsize(dest)})
+            except Exception as e:  # noqa: BLE001
+                kept.append({"file": rel, "error": str(e)})
+
     # What ComfyUI itself says each output node produced — the way to tell a
     # graph that saved nothing from a scan that missed something.
     reported = {}
@@ -251,6 +277,7 @@ def handler(job):
         reported[node] = {k: v for k, v in out.items() if k in ("images", "gifs", "video", "audio", "text")}
     return {
         "outputs": outputs,
+        "kept": kept,
         "reported": reported,
         "seconds": round(time.time() - started, 1),
         "prompt_id": prompt_id,
