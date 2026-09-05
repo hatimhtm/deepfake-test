@@ -21,6 +21,7 @@ over its local HTTP API.
 import base64
 import json
 import os
+import shutil
 import time
 import urllib.request
 import urllib.parse
@@ -149,6 +150,27 @@ def handler(job):
             if depth >= int(inp.get("depth") or 2):
                 dirs[:] = []
         return {"root": root, "files": out[:2000]}
+
+    # Put a file ONTO the volume. A LoRA trained here lands in ComfyUI's
+    # output folder, which no loader reads; without this it would have to
+    # travel out to storage and back in on a rented pod just to be usable.
+    # Confined to /runpod-volume/models so a job cannot write anywhere else.
+    if inp.get("op") == "install":
+        rel = str(inp.get("path") or "").lstrip("/")
+        url = inp.get("url")
+        root = "/runpod-volume/models"
+        dest = os.path.normpath(os.path.join(root, rel))
+        if not rel or not url:
+            return {"error": "input.path and input.url are required"}
+        if not dest.startswith(root + os.sep):
+            return {"error": f"path escapes {root}"}
+        os.makedirs(os.path.dirname(dest), exist_ok=True)
+        try:
+            with urllib.request.urlopen(url, timeout=600) as r, open(dest, "wb") as f:
+                shutil.copyfileobj(r, f, 1024 * 1024)
+        except Exception as e:  # noqa: BLE001
+            return {"error": f"install failed: {e}"}
+        return {"installed": os.path.relpath(dest, root), "bytes": os.path.getsize(dest)}
 
     workflow = inp.get("workflow")
     if not isinstance(workflow, dict):
